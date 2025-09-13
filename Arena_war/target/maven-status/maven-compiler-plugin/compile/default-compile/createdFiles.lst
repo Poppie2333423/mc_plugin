@@ -1,0 +1,9 @@
+com\pvpsurvival\game\GameManager$3.class
+com\pvpsurvival\listeners\CraftingListener.class
+com\pvpsurvival\commands\StartCommand.class
+com\pvpsurvival\listeners\PlayerListener.class
+com\pvpsurvival\game\GameManager.class
+com\pvpsurvival\game\GameManager$2.class
+com\pvpsurvival\game\GameManager$1.class
+com\pvpsurvival\PvPSurvivalPlugin.class
+com\pvpsurvival\game\GameState.class

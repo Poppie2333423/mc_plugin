@@ -1,0 +1,18 @@
+name: PvPSurvival
+version: 1.0.0
+main: com.pvpsurvival.PvPSurvivalPlugin
+api-version: '1.21'
+author: BoltAI
+description: Benutzerdefinierter PvP-Überlebensmodus für Multiplayer-Runden
+
+commands:
+  start:
+    description: Starte eine neue PvP-Überlebensrunde
+    usage: /start
+    permission: pvpsurvival.start
+    permission-message: Du hast keine Berechtigung, Spiele zu starten!
+
+permissions:
+  pvpsurvival.start:
+    description: Erlaubt das Starten von PvP-Überlebensrunden
+    default: op
