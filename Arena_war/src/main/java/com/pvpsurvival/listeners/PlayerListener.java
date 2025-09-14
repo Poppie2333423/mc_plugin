@@ -38,7 +38,7 @@ public class PlayerListener implements Listener {
     public void onPlayerJoin(PlayerJoinEvent event) {
         if (gameManager.isGameActive()) {
             event.getPlayer().sendMessage(Component.text(
-                "Ein PvP-Überlebensspiel läuft gerade. Du kannst zuschauen!", 
+                "Eine Arena War Runde läuft gerade. Du kannst zuschauen!", 
                 NamedTextColor.YELLOW
             ));
         }

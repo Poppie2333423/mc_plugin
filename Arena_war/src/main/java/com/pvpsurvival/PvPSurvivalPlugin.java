@@ -6,13 +6,13 @@ import com.pvpsurvival.listeners.CraftingListener;
 import com.pvpsurvival.listeners.PlayerListener;
 import org.bukkit.plugin.java.JavaPlugin;
 
-public class PvPSurvivalPlugin extends JavaPlugin {
+public class ArenaWarPlugin extends JavaPlugin {
     
     private GameManager gameManager;
     
     @Override
     public void onEnable() {
-        getLogger().info("PvP Survival Plugin enabled!");
+        getLogger().info("Arena War Plugin enabled!");
         
         // Initialize game manager
         gameManager = new GameManager(this);
@@ -24,7 +24,7 @@ public class PvPSurvivalPlugin extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new PlayerListener(gameManager), this);
         getServer().getPluginManager().registerEvents(new CraftingListener(), this);
         
-        getLogger().info("PvP Survival Plugin loaded successfully!");
+        getLogger().info("Arena War Plugin loaded successfully!");
     }
     
     @Override
@@ -32,7 +32,7 @@ public class PvPSurvivalPlugin extends JavaPlugin {
         if (gameManager != null) {
             gameManager.cleanup();
         }
-        getLogger().info("PvP Survival Plugin disabled!");
+        getLogger().info("Arena War Plugin disabled!");
     }
     
     public GameManager getGameManager() {

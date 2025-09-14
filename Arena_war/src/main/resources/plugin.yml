@@ -1,18 +1,18 @@
-name: PvPSurvival
+name: ArenaWar
 version: 1.0.0
-main: com.pvpsurvival.PvPSurvivalPlugin
+main: com.pvpsurvival.ArenaWarPlugin
 api-version: '1.21'
 author: BoltAI
-description: Benutzerdefinierter PvP-Überlebensmodus für Multiplayer-Runden
+description: Arena War - Intensiver PvP-Kampf für Multiplayer-Runden
 
 commands:
   start:
-    description: Starte eine neue PvP-Überlebensrunde
+    description: Starte eine neue Arena War Runde
     usage: /start
-    permission: pvpsurvival.start
+    permission: arenawar.start
     permission-message: Du hast keine Berechtigung, Spiele zu starten!
 
 permissions:
-  pvpsurvival.start:
-    description: Erlaubt das Starten von PvP-Überlebensrunden
+  arenawar.start:
+    description: Erlaubt das Starten von Arena War Runden
     default: op

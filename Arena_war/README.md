@@ -1,6 +1,6 @@
-# PvP Survival Plugin
+# Arena War Plugin
 
-Ein benutzerdefiniertes Minecraft Paper Plugin für Version 1.21.6, das einen intensiven Multiplayer-PvP-Überlebensmodus einführt.
+Ein benutzerdefiniertes Minecraft Paper Plugin für Version 1.21.6, das einen intensiven Arena War Kampfmodus einführt.
 
 ## Features
 
@@ -23,8 +23,8 @@ Ein benutzerdefiniertes Minecraft Paper Plugin für Version 1.21.6, das einen in
 
 ## Befehle
 
-- `/start` - Starte eine neue PvP-Überlebensrunde mit allen Online-Spielern
-  - Berechtigung: `pvpsurvival.start` (Standard: op)
+- `/start` - Starte eine neue Arena War Runde mit allen Online-Spielern
+  - Berechtigung: `arenawar.start` (Standard: op)
 
 ## Installation
 
@@ -51,6 +51,6 @@ Ein benutzerdefiniertes Minecraft Paper Plugin für Version 1.21.6, das einen in
 
 ## Berechtigungen
 
-- `pvpsurvival.start` - Erlaubt das Starten von Spielen (Standard: nur op)
+- `arenawar.start` - Erlaubt das Starten von Spielen (Standard: nur op)
 
-Viel Spaß bei deinen benutzerdefinierten PvP-Überlebenskämpfen!
+Viel Spaß bei deinen Arena War Kämpfen!

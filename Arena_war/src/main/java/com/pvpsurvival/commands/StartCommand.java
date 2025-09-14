@@ -19,7 +19,7 @@ public class StartCommand implements CommandExecutor {
     
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        if (!sender.hasPermission("pvpsurvival.start")) {
+        if (!sender.hasPermission("arenawar.start")) {
             sender.sendMessage(Component.text("Du hast keine Berechtigung, Spiele zu starten!", NamedTextColor.RED));
             return true;
         }
@@ -41,7 +41,7 @@ public class StartCommand implements CommandExecutor {
         }
         
         if (gameManager.startGame()) {
-            Component message = Component.text("Starte PvP-Überlebensspiel mit " + playerCount + " Spielern!", NamedTextColor.GREEN);
+            Component message = Component.text("Starte Arena War mit " + playerCount + " Spielern!", NamedTextColor.GREEN);
             Bukkit.broadcast(message);
         } else {
             sender.sendMessage(Component.text("Fehler beim Starten des Spiels. Bitte versuche es erneut.", NamedTextColor.RED));

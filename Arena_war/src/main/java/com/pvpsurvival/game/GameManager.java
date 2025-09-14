@@ -6,6 +6,8 @@ import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 import net.kyori.adventure.title.Title;
 import org.bukkit.*;
+import org.bukkit.advancement.Advancement;
+import org.bukkit.advancement.AdvancementProgress;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -22,7 +24,7 @@ import java.util.concurrent.ThreadLocalRandom;
 
 public class GameManager {
     
-    private final PvPSurvivalPlugin plugin;
+    private final ArenaWarPlugin plugin;
     private GameState gameState;
     private final Set<UUID> alivePlayers;
     private final Map<UUID, Integer> playerKills;
@@ -36,7 +38,7 @@ public class GameManager {
     private int pvpCountdown = 300; // 5 Minuten in Sekunden
     private Location enchantingTableLocation;
     
-    public GameManager(PvPSurvivalPlugin plugin) {
+    public GameManager(ArenaWarPlugin plugin) {
         this.plugin = plugin;
         this.gameState = GameState.WAITING;
         this.alivePlayers = new HashSet<>();
@@ -79,6 +81,9 @@ public class GameManager {
         Location newCenter = generateRandomSafeCenter(world);
         centerLocation = newCenter;
         
+        // Zeit auf Tag setzen
+        world.setTime(1000);
+        
         // Weltgrenze einrichten
         setupWorldBorder(world);
         
@@ -93,6 +98,9 @@ public class GameManager {
             player.setSaturation(20.0f); // Volle Sättigung
             player.setLevel(0); // 0 Level
             player.setExp(0.0f); // 0 Erfahrung
+            
+            // Alle Achievements zurücksetzen
+            resetPlayerAchievements(player);
             
             giveStarterGear(player);
             giveStarterEffects(player);
@@ -116,6 +124,20 @@ public class GameManager {
         
         // Countdown starten
         startCountdown(players);
+    }
+    
+    private void resetPlayerAchievements(Player player) {
+        // Alle Achievements des Spielers zurücksetzen
+        Iterator<Advancement> advancements = Bukkit.getServer().advancementIterator();
+        while (advancements.hasNext()) {
+            Advancement advancement = advancements.next();
+            AdvancementProgress progress = player.getAdvancementProgress(advancement);
+            if (progress != null) {
+                for (String criteria : progress.getAwardedCriteria()) {
+                    progress.revokeCriteria(criteria);
+                }
+            }
+        }
     }
     
     private Location generateRandomSafeCenter(World world) {
@@ -171,7 +193,7 @@ public class GameManager {
         gameScoreboard = manager.getNewScoreboard();
         
         mainObjective = gameScoreboard.registerNewObjective("pvpsurvival", Criteria.DUMMY, 
-            Component.text("PVP ÜBERLEBEN", NamedTextColor.GOLD, TextDecoration.BOLD));
+            Component.text("ARENA WAR", NamedTextColor.GOLD, TextDecoration.BOLD));
         mainObjective.setDisplaySlot(DisplaySlot.SIDEBAR);
     }
     
@@ -271,7 +293,7 @@ public class GameManager {
     
     private void startCountdown(List<Player> players) {
         countdownTask = new BukkitRunnable() {
-            int countdown = 10;
+            int countdown = 15;
             
             @Override
             public void run() {
@@ -305,11 +327,11 @@ public class GameManager {
         gameState = GameState.PREPARATION;
         
         // Spieler benachrichtigen
-        Component message = Component.text("Spiel gestartet! 5 Minuten Vorbereitungszeit (PvP deaktiviert)", NamedTextColor.GREEN);
+        Component message = Component.text("Arena War gestartet! 5 Minuten Vorbereitungszeit (PvP deaktiviert)", NamedTextColor.GREEN);
         for (Player player : Bukkit.getOnlinePlayers()) {
             player.sendMessage(message);
             Title title = Title.title(
-                Component.text("SPIEL GESTARTET!", NamedTextColor.GREEN, TextDecoration.BOLD),
+                Component.text("ARENA WAR GESTARTET!", NamedTextColor.GREEN, TextDecoration.BOLD),
                 Component.text("5 Minuten Vorbereitung", NamedTextColor.YELLOW),
                 Title.Times.times(Duration.ofMillis(500), Duration.ofSeconds(2), Duration.ofMillis(500))
             );
@@ -443,13 +465,21 @@ public class GameManager {
             int kills = playerKills.get(killer.getUniqueId()) + 1;
             playerKills.put(killer.getUniqueId(), kills);
             
-            Component message = Component.text(killer.getName() + " hat " + player.getName() + " getötet!", NamedTextColor.RED);
+            Component message = Component.text()
+                .append(Component.text(killer.getName(), NamedTextColor.RED, TextDecoration.BOLD))
+                .append(Component.text(" hat ", NamedTextColor.RED))
+                .append(Component.text(player.getName(), NamedTextColor.RED, TextDecoration.BOLD))
+                .append(Component.text(" getötet!", NamedTextColor.RED))
+                .build();
             Bukkit.broadcast(message);
             
             // Kill Sound für den Killer
             killer.playSound(killer.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1.0f, 1.5f);
         } else {
-            Component message = Component.text(player.getName() + " wurde eliminiert!", NamedTextColor.RED);
+            Component message = Component.text()
+                .append(Component.text(player.getName(), NamedTextColor.RED, TextDecoration.BOLD))
+                .append(Component.text(" wurde eliminiert!", NamedTextColor.RED))
+                .build();
             Bukkit.broadcast(message);
         }
         
@@ -501,12 +531,15 @@ public class GameManager {
             UUID winnerId = alivePlayers.iterator().next();
             Player winner = Bukkit.getPlayer(winnerId);
             if (winner != null) {
-                Component winMessage = Component.text(winner.getName() + " gewinnt das Spiel!", NamedTextColor.GOLD);
+                Component winMessage = Component.text()
+                    .append(Component.text(winner.getName(), NamedTextColor.GOLD, TextDecoration.BOLD))
+                    .append(Component.text(" gewinnt Arena War!", NamedTextColor.GOLD))
+                    .build();
                 Bukkit.broadcast(winMessage);
                 
                 for (Player player : Bukkit.getOnlinePlayers()) {
                     Title title = Title.title(
-                        Component.text("SPIEL BEENDET!", NamedTextColor.GOLD, TextDecoration.BOLD),
+                        Component.text("ARENA WAR BEENDET!", NamedTextColor.GOLD, TextDecoration.BOLD),
                         Component.text(winner.getName() + " gewinnt!", NamedTextColor.YELLOW),
                         Title.Times.times(Duration.ofSeconds(1), Duration.ofSeconds(3), Duration.ofSeconds(1))
                     );
@@ -517,7 +550,7 @@ public class GameManager {
                 }
             }
         } else {
-            Component drawMessage = Component.text("Spiel endete unentschieden!", NamedTextColor.YELLOW);
+            Component drawMessage = Component.text("Arena War endete unentschieden!", NamedTextColor.YELLOW);
             Bukkit.broadcast(drawMessage);
             
             for (Player player : Bukkit.getOnlinePlayers()) {
