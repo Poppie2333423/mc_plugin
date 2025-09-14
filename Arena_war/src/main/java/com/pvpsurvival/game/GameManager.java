@@ -1,6 +1,6 @@
 package com.pvpsurvival.game;
 
-import com.pvpsurvival.PvPSurvivalPlugin;
+import com.pvpsurvival.ArenaWarPlugin;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
