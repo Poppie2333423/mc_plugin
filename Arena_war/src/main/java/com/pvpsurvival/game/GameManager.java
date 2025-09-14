@@ -79,9 +79,6 @@ public class GameManager {
         Location newCenter = generateRandomSafeCenter(world);
         centerLocation = newCenter;
         
-        // Zeit auf Tag setzen
-        world.setTime(1000); // Tag
-        
         // Weltgrenze einrichten
         setupWorldBorder(world);
         
