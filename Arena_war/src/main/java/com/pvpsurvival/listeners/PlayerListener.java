@@ -12,6 +12,8 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.player.PlayerExpChangeEvent;
 import org.bukkit.entity.Player;
+import org.bukkit.event.entity.EntityExplodeEvent;
+import org.bukkit.event.block.BlockExplodeEvent;
 
 public class PlayerListener implements Listener {
     
@@ -72,6 +74,32 @@ public class PlayerListener implements Listener {
                 "Du kannst noch keine Blöcke abbauen! Warte bis das Spiel startet.", 
                 NamedTextColor.YELLOW
             ));
+            return;
+        }
+        
+        // Geschützte Blöcke (Enchanting Table Struktur) vor Zerstörung schützen
+        if (gameManager.isGameActive() && gameManager.isBlockProtected(event.getBlock().getLocation())) {
+            event.setCancelled(true);
+            event.getPlayer().sendMessage(Component.text(
+                "Du kannst die Enchanting Table Struktur nicht zerstören!", 
+                NamedTextColor.RED
+            ));
+        }
+    }
+    
+    @EventHandler
+    public void onEntityExplode(EntityExplodeEvent event) {
+        if (gameManager.isGameActive()) {
+            // Geschützte Blöcke aus der Explosionsliste entfernen
+            event.blockList().removeIf(block -> gameManager.isBlockProtected(block.getLocation()));
+        }
+    }
+    
+    @EventHandler
+    public void onBlockExplode(BlockExplodeEvent event) {
+        if (gameManager.isGameActive()) {
+            // Geschützte Blöcke aus der Explosionsliste entfernen
+            event.blockList().removeIf(block -> gameManager.isBlockProtected(block.getLocation()));
         }
     }
     

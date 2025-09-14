@@ -37,6 +37,7 @@ public class GameManager {
     private Objective mainObjective;
     private int pvpCountdown = 300; // 5 Minuten in Sekunden
     private Location enchantingTableLocation;
+    private final Set<Location> protectedBlocks = new HashSet<>();
     
     public GameManager(ArenaWarPlugin plugin) {
         this.plugin = plugin;
@@ -367,9 +368,19 @@ public class GameManager {
         int centerZ = centerLocation.getBlockZ();
         int centerY = world.getHighestBlockYAt(centerX, centerZ);
         
+        // 4x4 Obsidian Plattform unter dem Enchanting Table
+        for (int x = centerX - 1; x <= centerX + 1; x++) {
+            for (int z = centerZ - 1; z <= centerZ + 1; z++) {
+                Location obsidianLoc = new Location(world, x, centerY - 1, z);
+                world.getBlockAt(obsidianLoc).setType(Material.OBSIDIAN);
+                protectedBlocks.add(obsidianLoc);
+            }
+        }
+        
         // Enchanting Table in der Mitte platzieren
         enchantingTableLocation = new Location(world, centerX, centerY, centerZ);
         world.getBlockAt(enchantingTableLocation).setType(Material.ENCHANTING_TABLE);
+        protectedBlocks.add(enchantingTableLocation);
         
         // Bücherregale um den Enchanting Table platzieren
         placeBookshelvesAround(world, centerX, centerY, centerZ);
@@ -383,7 +394,7 @@ public class GameManager {
     }
     
     private void placeBookshelvesAround(World world, int centerX, int centerY, int centerZ) {
-        // 5x5 Bereich um den Enchanting Table mit Bücherregalen
+        // 5x5 Bereich um den Enchanting Table mit Bücherregalen (mit Luftraum dazwischen)
         for (int x = centerX - 2; x <= centerX + 2; x++) {
             for (int z = centerZ - 2; z <= centerZ + 2; z++) {
                 // Nicht den Mittelpunkt (Enchanting Table) überschreiben
@@ -393,6 +404,13 @@ public class GameManager {
                 if (x == centerX - 2 || x == centerX + 2 || z == centerZ - 2 || z == centerZ + 2) {
                     Location bookshelfLoc = new Location(world, x, centerY, z);
                     world.getBlockAt(bookshelfLoc).setType(Material.BOOKSHELF);
+                    protectedBlocks.add(bookshelfLoc);
+                }
+                
+                // Luftraum zwischen Enchanting Table und Bücherregalen sicherstellen
+                if ((x == centerX - 1 || x == centerX + 1) && (z == centerZ - 1 || z == centerZ + 1)) {
+                    Location airLoc = new Location(world, x, centerY, z);
+                    world.getBlockAt(airLoc).setType(Material.AIR);
                 }
             }
         }
@@ -514,7 +532,7 @@ public class GameManager {
             // Enchanting Table entfernen
             world.getBlockAt(enchantingTableLocation).setType(Material.AIR);
             
-            // Bücherregale entfernen
+            // Bücherregale und Obsidian entfernen
             for (int x = centerX - 2; x <= centerX + 2; x++) {
                 for (int z = centerZ - 2; z <= centerZ + 2; z++) {
                     if (x == centerX && z == centerZ) continue;
@@ -524,7 +542,18 @@ public class GameManager {
                     }
                 }
             }
+            
+            // Obsidian Plattform entfernen
+            for (int x = centerX - 1; x <= centerX + 1; x++) {
+                for (int z = centerZ - 1; z <= centerZ + 1; z++) {
+                    Location obsidianLoc = new Location(world, x, centerY - 1, z);
+                    world.getBlockAt(obsidianLoc).setType(Material.AIR);
+                }
+            }
         }
+        
+        // Geschützte Blöcke Liste leeren
+        protectedBlocks.clear();
         
         // Gewinner verkünden
         if (alivePlayers.size() == 1) {
@@ -573,6 +602,10 @@ public class GameManager {
         
         alivePlayers.clear();
         playerKills.clear();
+    }
+    
+    public boolean isBlockProtected(Location location) {
+        return protectedBlocks.contains(location);
     }
     
     private void updateScoreboard() {
