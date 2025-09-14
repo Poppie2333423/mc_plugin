@@ -30,8 +30,8 @@ public class StartCommand implements CommandExecutor {
         }
         
         int playerCount = Bukkit.getOnlinePlayers().size();
-        if (playerCount == 0) {
-            sender.sendMessage(Component.text("Keine Spieler online, um ein Spiel zu starten!", NamedTextColor.RED));
+        if (playerCount < 2) {
+            sender.sendMessage(Component.text("Es werden mindestens 2 Spieler benötigt, um ein Spiel zu starten!", NamedTextColor.RED));
             return true;
         }
         

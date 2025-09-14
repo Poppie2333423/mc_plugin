@@ -56,7 +56,7 @@ public class GameManager {
             }
         }
         
-        if (eligiblePlayers.isEmpty() || eligiblePlayers.size() > 8) {
+        if (eligiblePlayers.size() < 2 || eligiblePlayers.size() > 8) {
             return false;
         }
         
